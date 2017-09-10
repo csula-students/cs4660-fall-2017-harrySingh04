@@ -17,6 +17,8 @@ def get_second_and_third_items(li):
 
 def get_sum(li):
     """Return the sum of the list items"""
+
+
     sumOfList = 0
     for i in li :
         sumOfList = sumOfList + i

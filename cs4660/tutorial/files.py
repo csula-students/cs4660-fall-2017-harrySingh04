@@ -12,7 +12,9 @@ class SimpleFile(object):
         """
 
         f = open(file_path, encoding='utf-8')
+
         data = f.read()              # as bytes
+
         lines = data.split('\n')
         for line in lines:
             if(len(line) > 0):
