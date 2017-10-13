@@ -1,7 +1,6 @@
 """
 Searches module defines all different search algorithms
 """
-from datastructure.structure import Queue
 def bfs(graph, initial_node, dest_node):
     """
     Breadth First Search
@@ -9,7 +8,7 @@ def bfs(graph, initial_node, dest_node):
     returns a list of actions going from the initial node to dest_node
     """
     # Queue to store the list of node which will be going to be visited
-    Q = Queue()
+    Q = []
     # list to store the list of nodes visited
     visited_nodes = []
     # Dictionar key variable to store the list of parents of node visited
@@ -19,15 +18,15 @@ def bfs(graph, initial_node, dest_node):
     # Adding the intial node into the list
     distance_node[initial_node] = 0
     parent_list[initial_node]= None
-    Q.enqueue(initial_node)
-    while(not Q.isEmpty() ):
-        cur_node = Q.dequeue()
+    Q.append(initial_node)
+    while(bool(Q)):
+        cur_node = Q.pop(0)
         for neighbor_nodes in graph.neighbors(cur_node):
             if neighbor_nodes not in visited_nodes:
                 visited_nodes.append(neighbor_nodes)
                 parent_list[neighbor_nodes] = cur_node
                 distance_node[neighbor_nodes] = distance_node[cur_node] + graph.distance_nodes(cur_node,neighbor_nodes)
-                Q.enqueue(neighbor_nodes)
+                Q.append(neighbor_nodes)
 
         if dest_node in visited_nodes:
             break
