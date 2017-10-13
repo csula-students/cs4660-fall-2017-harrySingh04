@@ -74,3 +74,27 @@ class HashTable(object):
         address = self.hashKey(key)
         if address in self.memory:
             del self.memory[address]
+
+# Implementation of Queue Data Structure
+class Queue:
+    def __init__(self):
+        """Intiliazing the list for the queue"""
+        self.items = []
+
+    def enqueue(self,item):
+        """Adding the items into the list
+           at the end of the list"""
+        self.items.append(item)
+
+    def dequeue(self):
+        """Removing the items from the front end
+         of the list"""
+        return self.items.pop(0)
+
+    def isEmpty(self):
+        """Check if the queue is empty"""
+        return len(self.items) == 0
+
+    def size(self):
+        """Return the size of the queue"""
+        return len(self.items)

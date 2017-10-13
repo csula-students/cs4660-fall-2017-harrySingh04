@@ -41,6 +41,7 @@ def construct_graph_from_file(graph, file_path):
     graphData = f.read()
 
     lines = graphData.split('\n')
+    f.close()
     #print("\n\n\n")
     #for i in range(len(lines)):
         #print("Each lines data",lines[i])
@@ -174,6 +175,22 @@ class AdjacencyList(object):
                 if i == edge:
                     self.adjacency_list[edge.from_node].remove(i)
                     return True
+    def distance_nodes(self,from_node,to_node):
+        edge_values = self.adjacency_list[from_node]
+        distance = 0
+        for edge in edge_values:
+            if edge.to_node == to_node:
+                distance = edge.weight
+
+        return distance
+    def get_edge(self,from_node,to_node):
+        distance = self.distance_nodes(from_node,to_node)
+        #print("distance=",distance)
+        edge = Edge(from_node,to_node,self.distance_nodes(from_node,to_node))
+        #print("Edge=",edge)
+        return Edge(from_node,to_node,self.distance_nodes(from_node,to_node))
+
+
 
 
 class AdjacencyMatrix(object):
@@ -271,6 +288,18 @@ class AdjacencyMatrix(object):
         else:
             return False
 
+    def distance_nodes(self,from_node,to_node):
+        node1_index = self.__get_node_index(from_node)
+        node2_index = self.__get_node_index(to_node)
+        return self.adjacency_matrix[node1_index][node2_index]
+
+    def get_edge(self,from_node,to_node):
+        distance = self.distance_nodes(from_node,to_node)
+        #print("distance in adjacency_matrix=",distance)
+        edge = Edge(from_node,to_node,self.distance_nodes(from_node,to_node))
+        #print("Edge=",edge)
+        return Edge(from_node,to_node,self.distance_nodes(from_node,to_node))
+
     def __get_node_index(self, node):
         """helper method to find node index"""
         return self.nodes.index(node)
@@ -319,9 +348,24 @@ class ObjectOriented(object):
             self.edges.append(edge)
             return True
 
+
     def remove_edge(self, edge):
         if edge not in self.edges:
             return False
         else:
             self.edges.remove(edge)
             return True
+
+    def distance_nodes(self,from_node,to_node):
+        distance = 0
+        for edge in self.edges:
+            if edge.from_node == from_node and edge.to_node==to_node:
+                distance = edge.weight
+        return distance
+
+    def get_edge(self,from_node,to_node):
+        distance = self.distance_nodes(from_node,to_node)
+        #print("distance in ObjectOriented=",distance)
+        edge = Edge(from_node,to_node,self.distance_nodes(from_node,to_node))
+        #print("Edge=",edge)
+        return Edge(from_node,to_node,self.distance_nodes(from_node,to_node))
