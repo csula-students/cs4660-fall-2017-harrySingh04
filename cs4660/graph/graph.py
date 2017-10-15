@@ -48,7 +48,7 @@ def construct_graph_from_file(graph, file_path):
 
     noOfNodes = (int)(lines[0])
     #graph.adjacency_matrix = [[0 for x in range(noOfNodes)] for y in range(noOfNodes)]
-    for i in noOfNodes:
+    for i in range(noOfNodes):
         graph.add_node(Node(i))
     for line in lines[1:]:
         if line:
