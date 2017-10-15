@@ -48,14 +48,16 @@ def construct_graph_from_file(graph, file_path):
 
     noOfNodes = (int)(lines[0])
     #graph.adjacency_matrix = [[0 for x in range(noOfNodes)] for y in range(noOfNodes)]
+    for i in noOfNodes:
+        graph.add_node(Node(i))
     for line in lines[1:]:
         if line:
             #print("line=",line)
             from_node,to_node,value = map(int,line.split(':'))
             #graph.adjacency_matrix[from_node][to_node] = value
             #print((type)(graph.adjacency_matrix[from_node][to_node]))
-            graph.add_node(Node(from_node))
-            graph.add_node(Node(to_node))
+            #graph.add_node(Node(from_node))
+            #graph.add_node(Node(to_node))
             edge = Edge(Node(from_node),Node(to_node),value)
             #edge2 = Edge(Node(to_node),Node(from_node),value)
             #print("edge befor adding",edge)
@@ -225,8 +227,8 @@ class AdjacencyMatrix(object):
             if (self.adjacency_matrix[index_node][neighNode] != 0 ):
                 #print("node index to retrieve",i)
                 neighbour_list.append(i)
-        sorted_neighbour = sorted(neighbour_list, key=lambda node: node.data)
-        return sorted_neighbour
+        #sorted_neighbour = sorted(neighbour_list, key=lambda node: node.data)
+        return neighbour_list
 
     def add_node(self, node):
         if node in self.nodes:

@@ -9,6 +9,7 @@ TODO: implement Dijkstra utilizing the path with highest effect number
 
 import json
 
+
 # http lib import for Python 2 and 3: alternative 4
 try:
     from urllib.request import urlopen, Request
@@ -50,7 +51,7 @@ def __json_request(target_url, body):
 def BFS_Search(empty_room,dest_room):
     start_node = empty_room['id']
     dest_node = dest_room['id']
-    print("dest_node",dest_node)
+    #print("dest_node",dest_node)
     # Queue to store the list of node which will be going to be visited
     Q = []
     # list to store the list of nodes visited
@@ -58,52 +59,41 @@ def BFS_Search(empty_room,dest_room):
     # Dictionar key variable to store the list of parents of node visited
     parent_list = {}
     # dictionary key variable to store the distance between the two nodes
-    hp_point = {}
+    distance_node = {}
     # Adding the intial node into the list
-    hp_point[start_node] = 0
+    distance_node[start_node] = 0
     parent_list[start_node]= None
     Q.append(start_node)
     while((bool(Q))):
         cur_node = Q.pop(0)
-        if cur_node != start_node:
-            neighbors = get_state(cur_node)
-            #print("neighbors = ",neighbors)
-        else:
-            neighbors = empty_room
-
-        if len(neighbors)>0:
-            for i in range(len(neighbors)):
-                neighbor_nodes = neighbors['neighbors'][i]['id']
-                if neighbor_nodes not in visited_nodes:
-                    visited_nodes.append(neighbor_nodes)
-                    parent_list[neighbor_nodes] = cur_node
-                    trans_weight = (transition_state(cur_node, neighbors['neighbors'][i]['id']))
-                    #print("trans_weight =",trans_weight)
-                    hp_point[neighbor_nodes] = hp_point[cur_node] + trans_weight['event']['effect']
-                    #print("neighbors = ",neighbor_nodes,"\n\n\n\n\n\n")
-                    Q.append(neighbor_nodes)
-                    #print("Items = ",Q)
+        neigh = get_state(cur_node)
+        neighbor_nodes = neigh['neighbors']
+        for i in range(len(neighbor_nodes)):
+            neighbors = neighbor_nodes[i]['id']
+            if neighbor_nodes not in visited_nodes:
+                visited_nodes.append(neighbors)
+                parent_list[neighbors] = cur_node
+                distance_node[neighbors] = distance_node[cur_node]+1
+                Q.append(neighbors)
 
         if dest_node in visited_nodes:
-            print("visited_nodes",visited_nodes)
+            #print("visited_nodes",visited_nodes)
             break
 
     #print("WE have items=",Q)
-    print("HP epoint = ",parent_list)
-    list = []
+    #print("HP epoint = ",parent_list)
+    #list = []
     total_hp_bfs=0
     start_node = dest_node
-    while(parent_list[start_node] is not None):
-        par_node = parent_list[start_node]
-        #print("parent node",par_node)
-        total_hp_bfs += hp_point[par_node]
-        start_node = par_node
+    if dest_node in visited_nodes:
+        #print("found you")
+        total_hp_bfs = distance_node[dest_node]
 
     return total_hp_bfs
 
 def Dijkstra(empty_room,dest_room):
     start_node = empty_room['id']
-    dest_node = empty_room['id']
+    dest_node = dest_room['id']
     # dictionary key variable to store the distance between the two nodes
     distance_node = {}
     # list to store the list of nodes visited
@@ -111,51 +101,47 @@ def Dijkstra(empty_room,dest_room):
     # Dictionar key variable to store the list of parents of node visited
     parent_list = {}
     Q = []
-    hp_effect[start_node] = 0
+    distance_node[start_node] = 0
     parent_list[start_node] = None
     Q.append((0,start_node))
     while(bool(Q)):
-        sorted(Q, key=lambda x: x[0],reverse = True)
+        Q = sorted(Q, key=lambda x: x[0],reverse = True)
+        #print("items",Q,"\n\n\n")
         max_node =[Q.pop(0)]
+        #print("Max node = ",max_node,"\n\n\n")
         cur_node = max_node[0][1]
         if cur_node in visited_nodes:
+            #print("visited_nodes",visited_nodes)
             continue
         visited_nodes.append(cur_node)
-        if cur_node != start_node:
-            neighbors = get_state(cur_node)
-            #print("neighbors = ",neighbors)
-        else:
-            neighbors = empty_room
-        for i in range(len(neighbors['neighbors'])):
-            neighbor_nodes = neighbors['neighbors'][i]['id']
-            if neighbor_nodes not in visited_nodes:
-                if neighbor_nodes not in hp_point:
-                    trans_weight = (transition_state(cur_node, neighbors['neighbors'][i]['id']))
-                    print("trans_weight =",trans_weight)
-                    hp_point[neighbor_nodes] = hp_point[cur_node] + trans_weight['event']['effect']
-                    value = hp_point[neighbor_nodes]
-                    Q.append((value,neighbor_nodes))
-                    parent_list[neighbor_nodes] = cur_node
+        neigh = get_state(cur_node)
+        neighbor_nodes = neigh['neighbors']
+        for i in range(len(neighbor_nodes)):
+            neighbors = neighbor_nodes[i]['id']
+            if neighbors not in visited_nodes:
+                trans_weight = (transition_state(cur_node, neighbors))
+                hp_weight = trans_weight['event']['effect']
+                #print(distance_node[cur_node] + trans_weight['event']['effect'])
+                if neighbors not in distance_node:
+                    #print("trans_weight =",trans_weight)
+                    distance_node[neighbors] = distance_node[cur_node]+ hp_weight
+                    value = distance_node[neighbors]
+                    Q.append((value,neighbors))
+                    parent_list[neighbors] = cur_node
                 else:
-                    if hp_point[neighbor_nodes] > (hp_point[cur_node]) + (transition_state(cur_node, neighbors['neighbors'][i]['id'])):
-                        hp_point[neighbor_nodes] = hp_point[cur_node] + (transition_state(cur_node, neighbors['neighbors'][i]['id']))
-                        value = hp_point[neighbor_nodes]
-                        Q.append((value,neighbor_nodes))
-                        parent_list[neighbor_nodes] = cur_node
+                    if distance_node[neighbors] < distance_node[cur_node] + hp_weight:
+                        distance_node[neighbors] = distance_node[cur_node] + hp_weight
+                        value = distance_node[neighbors]
+                        Q.append((value,neighbors))
+                        parent_list[neighbors] = cur_node
         if dest_node in visited_nodes:
             break
 
-    list = []
-    start_node = dest_node
-    while(parent_list[start_node] is not None):
-        par_node = parent_list[start_node]
-        #print("parent node",par_node)
-        edge = graph.get_edge(par_node,start_node)
-        #print("edge",edge)
-        list.append(edge)
-        start_node = par_node
+    hp_point_dijkstra = 0;
+    if dest_node  in visited_nodes:
+        hp_point_dijkstra = distance_node[dest_node]
 
-    return 0
+    return hp_point_dijkstra
 
 if __name__ == "__main__":
     # Your code starts here
@@ -166,5 +152,7 @@ if __name__ == "__main__":
     #print("length = ",len(empty_room['neighbors']))
     #print(transition_state(empty_room['id'], empty_room['neighbors'][0]['id']))
     #Calling method BFS search
-    print(BFS_Search(empty_room,dest_room))
-    print(Dijkstra(empty_room,dest_node))
+    hp_point_bfs = BFS_Search(empty_room,dest_room)
+    print("Hp point for BFS = ",hp_point_bfs)
+    hp_point_dijkstra = Dijkstra(empty_room,dest_room)
+    print("HP point for Dijkstra=",hp_point_dijkstra)
