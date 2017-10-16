@@ -1,7 +1,7 @@
 """
 Searches module defines all different search algorithms
 """
-from datastructure import structure
+#from datastructure import structure
 def bfs(graph, initial_node, dest_node):
     """
     Breadth First Search
