@@ -70,6 +70,8 @@ def parse_grid_file(graph, file_path):
             current_tile = Tile(x,y,grid[y][x])
             if current_tile.symbol == "##":
                 continue
+            #if x==4 and y==4:
+                #print("current_tile=",current_tile.sym)
 
             if (x,y-1) in totalNoTiles:
                 newTile = totalNoTiles[(x,y-1)]
@@ -108,13 +110,14 @@ def convert_edge_to_grid_actions(edges):
         toTile = edge.to_node
 
         if(fromTile.data.x - toTile.data.x > 0):
+            path+="W"
+        elif(fromTile.data.x-toTile.data.x<0):
             path+="E"
         elif(fromTile.data.y-toTile.data.y>0):
-            path+="S"
-        elif(fromTile.data.y-toTile.data.y<0):
             path+="N"
-        elif(fromTile.data.x-toTile.data.x>0):
-            path+="W"
+        elif(fromTile.data.y-toTile.data.y<0):
+            path+="S"
 
-    #print("path = ",path)
+
+    print("path = ",path)
     return path
